@@ -4,13 +4,9 @@
   --primary: #7856E8;
   --primary-light: #9d7fe6;
   --pink-accent: #E879F9;
-  --bg-glass: rgba(255, 255, 255, 0.65);
   --text-main: #29243A;
   --text-sub: #6B7280;
-  --border-glass: rgba(255, 255, 255, 0.85);
-  --danger: #EF4444;
   --success: #10B981;
-  --shadow: 0 10px 30px rgba(120, 86, 232, 0.15);
 }
 
 * {
@@ -42,7 +38,7 @@ body, html {
   pointer-events: none;
 }
 
-/* Bokeh Particles */
+/* Bokeh Effect */
 .bokeh {
   position: absolute;
   border-radius: 50%;
@@ -58,7 +54,7 @@ body, html {
   100% { transform: translateY(-30px) scale(1.2); opacity: 1; }
 }
 
-/* Background Waves */
+/* Background Container & Waves */
 .bg-container {
   position: absolute;
   inset: 0;
@@ -87,18 +83,26 @@ body, html {
   clip-path: ellipse(100% 60% at 50% 100%);
 }
 
-/* SVG Elements */
+/* SVG Elements & Animations */
 .svg-element {
   position: absolute;
   filter: drop-shadow(0px 15px 25px rgba(120, 86, 232, 0.25));
 }
 
-.bottom-left-flower {
-  bottom: -5vh;
-  left: -10vw;
-  width: clamp(220px, 50vw, 380px);
-  transform-origin: bottom left;
-  animation: swayLeft 8s infinite alternate ease-in-out;
+.left-mid-leaves {
+  top: 22vh;
+  left: -8vw;
+  width: clamp(140px, 35vw, 260px);
+  opacity: 0.85;
+  animation: swayLeft 10s infinite alternate ease-in-out;
+}
+
+.right-mid-leaves {
+  top: 30vh;
+  right: -8vw;
+  width: clamp(130px, 32vw, 250px);
+  opacity: 0.8;
+  animation: swayRight 8s infinite alternate ease-in-out;
 }
 
 .bottom-right-leaves {
@@ -117,25 +121,17 @@ body, html {
   animation: swayRight 7s infinite alternate ease-in-out;
 }
 
-.left-mid-leaves {
-  top: 25vh;
-  left: -15vw;
-  width: clamp(130px, 35vw, 260px);
-  opacity: 0.8;
-  animation: swayLeft 12s infinite alternate ease-in-out;
-}
-
 @keyframes swayLeft {
   0% { transform: rotate(0deg) scale(1); }
-  100% { transform: rotate(6deg) scale(1.02); }
+  100% { transform: rotate(5deg) scale(1.02); }
 }
 
 @keyframes swayRight {
   0% { transform: rotate(0deg) scale(1); }
-  100% { transform: rotate(-6deg) scale(1.02); }
+  100% { transform: rotate(-5deg) scale(1.02); }
 }
 
-/* App Viewport & Layout */
+/* App Viewport */
 .app-viewport {
   width: 100%;
   max-width: 480px;
@@ -154,12 +150,13 @@ body, html {
   padding: 20px;
   padding-bottom: 95px; 
   position: relative; 
+  display: flex;
+  flex-direction: column;
 }
 
-.screen { display: none; width: 100%; height: 100%; flex-direction: column; }
-.screen.active { display: flex; }
+.screen { display: flex; width: 100%; height: 100%; flex-direction: column; }
 
-/* Glass Card Component */
+/* Glass Card */
 .glass-card {
   background: rgba(255, 255, 255, 0.65);
   backdrop-filter: blur(20px);
@@ -169,7 +166,8 @@ body, html {
   padding: 20px;
   box-shadow: 0 15px 35px rgba(120, 86, 232, 0.15);
 }
-/* ================= Admin Home Screen (Image 1 Exact Match) ================= */
+
+/* Admin Home Specific Styles */
 .admin-top-profile { 
   display: flex; 
   align-items: center; 
@@ -261,7 +259,6 @@ body, html {
   color: var(--text-main); 
 }
 
-/* Toggle Switch */
 .switch { position: relative; display: inline-block; width: 48px; height: 26px; }
 .switch input { opacity: 0; width: 0; height: 0; }
 .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 34px; }
@@ -302,6 +299,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   justify-content: center;
   box-shadow: 0 10px 30px rgba(120,86,232,0.35); 
   position: relative; 
+  margin-bottom: 25px;
 }
 
 .dots-row { display: flex; gap: 10px; }
@@ -309,8 +307,8 @@ input:checked + .slider:before { transform: translateX(22px); }
 
 .user-purple-node {
   position: absolute; 
-  bottom: -15px; 
-  right: 15px; 
+  bottom: -10px; 
+  right: 22%; 
   background: var(--pink-accent);
   width: 50px; 
   height: 50px; 
@@ -324,38 +322,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   font-size: 1.1rem;
 }
 
-/* ================= Auth & General Components ================= */
-.auth-card { margin: auto; width: 100%; max-width: 360px; }
-.auth-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-.tab-btn { flex: 1; padding: 10px; border: none; background: rgba(255,255,255,0.5); border-radius: 10px; cursor: pointer; font-weight: 600; color: var(--text-sub); }
-.tab-btn.active { background: var(--primary); color: white; }
-.input-group { margin-bottom: 15px; text-align: left; }
-.input-group label { display: block; font-size: 0.85rem; margin-bottom: 5px; color: var(--text-main); font-weight: 500; }
-.input-group input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border-glass); background: rgba(255,255,255,0.7); outline: none; color: var(--text-main); }
-.btn-gradient { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; width: 100%; box-shadow: 0 4px 15px rgba(120,86,232,0.3); }
-
-/* ================= Chat List & Room ================= */
-.chat-item { display: flex; align-items: center; gap: 15px; padding: 12px 15px; background: var(--bg-glass); border-radius: 16px; margin-bottom: 10px; border: 1px solid var(--border-glass); cursor: pointer; }
-.chat-avatar { position: relative; width: 45px; height: 45px; }
-.chat-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-.status-dot { position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; }
-.status-dot.online { background: var(--success); }
-.chat-info h4 { font-size: 0.95rem; color: var(--text-main); }
-.chat-info p { font-size: 0.8rem; color: var(--text-sub); }
-
-#chat-room-view { padding: 0 !important; }
-.chat-room-header { display: flex; align-items: center; gap: 12px; padding: 15px; background: var(--primary); color: white; border-radius: 0 0 20px 20px; }
-.btn-back { background: none; border: none; color: white; font-size: 1.4rem; cursor: pointer; }
-.chat-room-header img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid white; }
-.chat-messages-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-.msg-bubble { max-width: 78%; padding: 10px 14px; border-radius: 16px; font-size: 0.88rem; }
-.msg-bubble.sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
-.msg-bubble.received { align-self: flex-start; background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-main); border-bottom-left-radius: 4px; }
-.chat-input-area { display: flex; gap: 10px; align-items: center; padding: 12px 15px; background: var(--bg-glass); border-top: 1px solid var(--border-glass); }
-.chat-input-area input { flex: 1; padding: 10px 14px; border-radius: 20px; border: none; background: rgba(255,255,255,0.7); outline: none; color: var(--text-main); }
-.btn-send { background: var(--primary); color: white; border: none; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-
-/* ================= Bottom Navigation Bar ================= */
+/* Bottom Navigation Bar */
 .bottom-nav { 
   position: absolute; 
   bottom: 0; 
@@ -366,7 +333,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   padding: 12px 10px; 
   background: rgba(255, 255, 255, 0.85); 
   backdrop-filter: blur(20px); 
-  border-top: 1px solid var(--border-glass); 
+  border-top: 1px solid rgba(255, 255, 255, 0.9); 
   border-top-left-radius: 24px; 
   border-top-right-radius: 24px; 
   z-index: 20; 
@@ -390,7 +357,4 @@ input:checked + .slider:before { transform: translateX(22px); }
 }
 
 .nav-item svg { width: 22px; height: 22px; fill: currentColor; }
-
-/* ================= Utility ================= */
-.divider { margin: 15px 0; border: none; border-top: 1px solid var(--border-glass); }
-.btn-danger { background: var(--danger); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 600; width: 100%; cursor: pointer; }
+  
