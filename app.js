@@ -2,27 +2,10 @@ const SUPABASE_URL = "https://bagscbfokioflnuyxcuz.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhZ3NjYmZva2lvZmxudXl4Y3V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM0MjAxOTEsImV4cCI6MjEwODk5NjE5MX0.9iU1vhruNSO54Van2GIBM1OrofuUfplWtPC7O7cV60s";
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// i18n
 const i18n = {
-  en: {
-    welcomeTitle: "Welcome", welcomeSub: "Connect directly with Fariha", loginTab: "Login", signupTab: "Register",
-    fullNameLabel: "Full Name", emailLabel: "Email", passwordLabel: "Password", loginBtn: "Login", signupBtn: "Register Account",
-    statusOnline: "Currently Online", statusOffline: "Currently Offline", btnStartChat: "Message Fariha",
-    adminControlTitle: "🛡️ Admin Control Panel", adminLiveStatus: "Online Status:", btnDelete20Min: "🗑️ Delete 20 Min Media",
-    btnDeleteInactive: "🧹 Purge Inactive Users", userListTitle: "👥 Registered Users", typeMessagePlaceholder: "Type a message...",
-    btnSend: "Send", profileModalTitle: "Settings", editNameLabel: "Your Name", selectAvatarLabel: "Select Avatar:",
-    tabMale: "Male", tabFemale: "Female", adminPhotoLabel: "Upload Photo:", btnSaveProfile: "Save Changes",
-    btnDeleteAccount: "Delete My Account", navHome: "Home", navChat: "Chat", navProfile: "Profile", adminPanel: "Admin Panel", aboutMe: "About Me", messages: "Messages"
-  },
-  bn: {
-    welcomeTitle: "স্বাগতম", welcomeSub: "ফারিহা জান্নাতের সাথে যুক্ত হোন", loginTab: "লগইন", signupTab: "রেজিস্ট্রেশন",
-    fullNameLabel: "পূর্ণ নাম", emailLabel: "ইমেইল", passwordLabel: "পাসওয়ার্ড", loginBtn: "লগইন করুন", signupBtn: "একাউন্ট তৈরি",
-    statusOnline: "বর্তমানে অনলাইনে", statusOffline: "বর্তমানে অফলাইনে", btnStartChat: "মেসেজ দিন",
-    adminControlTitle: "🛡️ অ্যাডমিন প্যানেল", adminLiveStatus: "অনলাইন স্ট্যাটাস:", btnDelete20Min: "🗑️ ২০ মিনিটের মিডিয়া ডিলিট",
-    btnDeleteInactive: "🧹 ইনঅ্যাক্টিভ ডিলিট", userListTitle: "👥 ইউজার তালিকা", typeMessagePlaceholder: "মেসেজ লিখুন...",
-    btnSend: "পাঠান", profileModalTitle: "সেটিংস", editNameLabel: "আপনার নাম", selectAvatarLabel: "এভাটার:",
-    tabMale: "ছেলে", tabFemale: "মেয়ে", adminPhotoLabel: "ছবি আপলোড:", btnSaveProfile: "সেভ করুন",
-    btnDeleteAccount: "একাউন্ট ডিলিট করুন", navHome: "হোম", navChat: "চ্যাট", navProfile: "প্রোফাইল", adminPanel: "অ্যাডমিন প্যানেল", aboutMe: "আমার সম্পর্কে", messages: "মেসেজ"
-  }
+  en: { welcomeTitle: "Welcome", fullNameLabel: "Full Name", emailLabel: "Email", passwordLabel: "Password", loginBtn: "Login", adminControlTitle: "🛡️ Admin Control Panel", adminLiveStatus: "Online Presence Status:", userListTitle: "👥 Registered Users", typeMessagePlaceholder: "Type a message..." },
+  bn: { welcomeTitle: "স্বাগতম", fullNameLabel: "পূর্ণ নাম", emailLabel: "ইমেইল", passwordLabel: "পাসওয়ার্ড", loginBtn: "লগইন করুন", adminControlTitle: "🛡️ অ্যাডমিন প্যানেল", adminLiveStatus: "অনলাইন স্ট্যাটাস:", userListTitle: "👥 ইউজার তালিকা", typeMessagePlaceholder: "মেসেজ লিখুন..." }
 };
 
 let currentLang = localStorage.getItem('app_lang') || 'en';
@@ -32,6 +15,7 @@ let farihaProfile = null;
 let selectedAvatarUrl = "";
 let isLoginMode = true;
 let currentChatUserId = null;
+let currentChatUserProfile = null;
 
 // ================= NAVIGATION & UI =================
 function switchTab(screenId, navElement) {
@@ -110,8 +94,12 @@ async function checkSession() {
     document.getElementById('auth-screen').classList.remove('active');
     document.getElementById('btn-logout').classList.remove('hidden');
     
-    // Auto-navigate to Chat List on login (as per Image 4)
-    switchTab('chat-list-view', document.getElementById('nav-chat'));
+    // অ্যাডমিন কিনা চেক
+    if (currentProfile && currentProfile.is_admin) {
+      switchTab('profile-view', document.getElementById('nav-profile'));
+    } else {
+      switchTab('chat-list-view', document.getElementById('nav-chat'));
+    }
     
     setupRealtimeSubscriptions();
   } else {
@@ -129,7 +117,8 @@ async function loadUserProfile() {
     if(data.is_admin) {
        document.getElementById('admin-profile-photo').src = data.avatar_url || 'https://via.placeholder.com/150';
        document.getElementById('header-admin-photo').src = data.avatar_url || 'https://via.placeholder.com/150';
-       document.getElementById('admin-section-title').style.display = 'block';
+       document.getElementById('admin-profile-name').innerText = data.full_name;
+       document.getElementById('header-admin-name').innerText = data.full_name;
        document.getElementById('admin-actions-container').style.display = 'block';
     }
   }
@@ -145,35 +134,84 @@ async function handleLogout() {
   window.location.reload();
 }
 
-// ================= CHAT LIST (Image 4) =================
+// ================= CHAT LIST (Dynamic Load) =================
 async function loadChatList() {
   const container = document.getElementById('chat-list-container');
-  // Keep the static dummy data from HTML for now as placeholders, 
-  // In real scenario, you would fetch from 'messages' table unique users.
+  if(!currentProfile.is_admin) {
+      // নরমাল ইউজার শুধু ফারিহাকে দেখবে
+      container.innerHTML = `
+        <div class="chat-item" onclick="openChatRoom('${farihaProfile.full_name}', '${farihaProfile.avatar_url}', '${farihaProfile.id}')">
+            <div class="chat-avatar">
+              <img src="${farihaProfile.avatar_url}" alt="Fariha">
+              <span class="status-dot ${farihaProfile.is_online ? 'online' : ''}"></span>
+            </div>
+            <div class="chat-info">
+              <div class="chat-info-top">
+                <h4>${farihaProfile.full_name}</h4>
+              </div>
+              <div class="chat-info-bottom">
+                <p>Tap to chat...</p>
+              </div>
+            </div>
+        </div>`;
+      return;
+  }
+
+  // অ্যাডমিনের জন্য সব ইউজার লিস্ট
+  const { data: users } = await db.from('profiles').select('*').eq('is_admin', false);
+  
+  if(!users || users.length === 0) {
+      container.innerHTML = `<p style="text-align:center; color:var(--text-sub); font-size:0.9rem; margin-top:30px;">No users registered yet.</p>`;
+      return;
+  }
+
+  container.innerHTML = "";
+  users.forEach(user => {
+    const div = document.createElement('div');
+    div.className = 'chat-item';
+    div.onclick = () => openChatRoom(user.full_name, user.avatar_url, user.id);
+    div.innerHTML = `
+        <div class="chat-avatar">
+          <img src="${user.avatar_url || 'https://via.placeholder.com/50'}" alt="User">
+          <span class="status-dot ${user.is_online ? 'online' : ''}"></span>
+        </div>
+        <div class="chat-info">
+          <div class="chat-info-top">
+            <h4>${user.full_name}</h4>
+          </div>
+          <div class="chat-info-bottom">
+            <p>Tap to chat...</p>
+          </div>
+        </div>`;
+    container.appendChild(div);
+  });
 }
 
-// ================= CHAT ROOM (Image 5) =================
-function openChatRoom(name, avatar) {
+// ================= CHAT ROOM (Image 3) =================
+function openChatRoom(name, avatar, userId) {
+  currentChatUserId = userId;
   document.getElementById('chat-room-name').innerText = name;
-  document.getElementById('chat-room-avatar').src = avatar;
+  document.getElementById('chat-room-avatar').src = avatar || 'https://via.placeholder.com/40';
   switchTab('chat-room-view');
   loadMessages();
 }
 
 function closeChatRoom() {
-  switchTab('chat-list-view', document.getElementById('nav-chat'));
+  if (currentProfile && currentProfile.is_admin) {
+      switchTab('chat-list-view', document.getElementById('nav-chat'));
+  } else {
+      switchTab('chat-list-view', document.getElementById('nav-chat'));
+  }
 }
 
 async function sendMessage() {
   const input = document.getElementById('message-input');
   const content = input.value.trim();
-  if (!content || !farihaProfile) return;
-
-  const receiverId = currentProfile.is_admin ? currentChatUserId : farihaProfile.id;
+  if (!content || !currentChatUserId) return;
 
   await db.from('messages').insert([{
     sender_id: currentUser.id,
-    receiver_id: receiverId || farihaProfile.id,
+    receiver_id: currentChatUserId,
     content: content,
     media_type: 'text'
   }]);
@@ -186,12 +224,11 @@ function handleKeyPress(e) {
 }
 
 async function loadMessages() {
-  const targetId = currentProfile.is_admin ? currentChatUserId : farihaProfile?.id;
-  if(!targetId) return;
+  if(!currentChatUserId) return;
 
   const { data } = await db.from('messages')
     .select('*')
-    .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${targetId}),and(sender_id.eq.${targetId},receiver_id.eq.${currentUser.id})`)
+    .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${currentChatUserId}),and(sender_id.eq.${currentChatUserId},receiver_id.eq.${currentUser.id})`)
     .order('created_at', { ascending: true });
 
   const container = document.getElementById('chat-messages');
@@ -216,6 +253,10 @@ async function loadMessages() {
   });
   container.scrollTop = container.scrollHeight;
 }
+
+// Placeholder functions for media (Not in main feature but kept for completeness)
+function handleImageUpload(event) { alert("Image upload to be implemented"); }
+function toggleVoiceRecording() { alert("Voice recording to be implemented"); }
 
 // ================= SETTINGS MODAL =================
 function openSettingsModal() {
@@ -259,13 +300,13 @@ async function saveProfileChanges() {
   if (!currentProfile.is_admin && selectedAvatarUrl) updateData.avatar_url = selectedAvatarUrl;
 
   await db.from('profiles').update(updateData).eq('id', currentUser.id);
-  alert(i18n[currentLang].alertProfileSaved || "Profile updated!");
+  alert("Profile updated!");
   closeSettingsModal();
   loadUserProfile();
 }
 
 async function deleteMyAccount() {
-  if (!confirm(i18n[currentLang].confirmDeleteAccount || "Delete account permanently?")) return;
+  if (!confirm("Delete account permanently?")) return;
   await db.from('profiles').delete().eq('id', currentUser.id);
   await db.auth.signOut();
   window.location.reload();
@@ -292,8 +333,15 @@ async function adminDelete7DaysInactive() {
 
 // ================= REAL-TIME =================
 function setupRealtimeSubscriptions() {
-  db.channel('public:messages').on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => {
-    if(document.getElementById('chat-room-view').classList.contains('active')) loadMessages();
+  db.channel('public:messages').on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, (payload) => {
+    // যদি চ্যাট রুম ওপেন থাকে তবে মেসেজ লোড করবে
+    if(document.getElementById('chat-room-view').classList.contains('active')) {
+        loadMessages();
+    }
+    // চ্যাট লিস্টে থাকলে প্রিভিউ আপডেট করবে (ঐচ্ছিক)
+    if(document.getElementById('chat-list-view').classList.contains('active')) {
+        loadChatList();
+    }
   }).subscribe();
 }
 
