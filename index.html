@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fariha Jannat - Official Platform</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Supabase JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- Auth Screen -->
+  <div id="auth-screen" class="screen active">
+    <div class="auth-card">
+      <h1 class="brand-logo">Fariha Jannat</h1>
+      <p class="sub-title">অফিসিয়াল চ্যাট ও প্রোফাইল প্ল্যাটফর্ম</p>
+      
+      <div class="auth-tabs">
+        <button id="tab-login" class="tab-btn active" onclick="switchAuthTab('login')">লগইন</button>
+        <button id="tab-signup" class="tab-btn" onclick="switchAuthTab('signup')">রেজিস্ট্রেশন</button>
+      </div>
+
+      <form id="auth-form" onsubmit="handleAuth(event)">
+        <div class="input-group">
+          <label>ইমেইল</label>
+          <input type="email" id="auth-email" placeholder="example@mail.com" required>
+        </div>
+        <div class="input-group">
+          <label>পাসওয়ার্ড</label>
+          <input type="password" id="auth-password" placeholder="••••••••" required>
+        </div>
+        <div class="input-group" id="name-group" style="display: none;">
+          <label>আপনার নাম</label>
+          <input type="text" id="auth-name" placeholder="আপনার নাম লিখুন">
+        </div>
+        <button type="submit" id="auth-submit-btn" class="btn btn-primary">লগইন করুন</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- App Main Screen -->
+  <div id="app-screen" class="screen">
+    <!-- Top Bar Navigation -->
+    <header class="top-nav">
+      <div class="user-info">
+        <div id="my-avatar-preview" class="mini-avatar"></div>
+        <div>
+          <h3 id="my-name">User Name</h3>
+          <span id="my-role-badge" class="badge">ইউজার</span>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button class="btn-icon" onclick="openProfileModal()">⚙️</button>
+        <button class="btn-icon danger" onclick="handleLogout()">🚪</button>
+      </div>
+    </header>
+
+    <!-- Content View (Home for Users / Admin Panel for Admin) -->
+    <main class="main-container">
+      
+      <!-- User View: Owner Showcase Card -->
+      <section id="user-view" class="view-section">
+        <div class="owner-card">
+          <div class="owner-avatar-wrapper">
+            <img id="owner-photo" src="https://via.placeholder.com/150" alt="Fariha Jannat">
+            <span id="owner-status-dot" class="status-dot offline"></span>
+          </div>
+          <h2>ফারিহা জান্নাত</h2>
+          <p id="owner-status-text" class="status-text">বর্তমানে অফলাইনে আছেন</p>
+
+          <button class="btn btn-primary chat-start-btn" onclick="openChatWithFariha()">
+            💬 ফারিহার সাথে চ্যাট করুন
+          </button>
+        </div>
+      </section>
+
+      <!-- Admin View: User Management & Controls -->
+      <section id="admin-view" class="view-section" style="display: none;">
+        <div class="admin-dashboard">
+          <div class="admin-controls-card">
+            <h3>🛡️ অ্যাডমিন কন্ট্রোল প্যানেল</h3>
+            
+            <div class="toggle-group">
+              <label>অনলাইন স্ট্যাটাস (লাইভ):</label>
+              <input type="checkbox" id="admin-online-toggle" onchange="toggleAdminOnlineStatus(this.checked)">
+            </div>
+
+            <div class="action-buttons">
+              <button class="btn btn-warning" onclick="deleteRecentMedia20Min()">
+                🗑️ ২০ মিনিটের মিডিয়া ডিলিট (ভয়েস ও ছবি)
+              </button>
+              <button class="btn btn-danger" onclick="deleteInactiveUsers7Days()">
+                🧹 ৭ দিন ইনঅ্যাক্টিভ ইউজার ক্লিন করুন
+              </button>
+            </div>
+          </div>
+
+          <div class="user-list-card">
+            <h3>👥 সব ইউজার তালিকা</h3>
+            <div id="users-list-container"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Chat Screen / Modal -->
+  <div id="chat-modal" class="modal">
+    <div class="modal-content chat-box">
+      <div class="chat-header">
+        <button class="btn-back" onclick="closeChatModal()">←</button>
+        <div class="chat-user-details">
+          <h4 id="chat-target-name">ফারিহা জান্নাত</h4>
+          <span id="chat-target-status" class="sub-text">অফলাইন</span>
+        </div>
+      </div>
+
+      <div id="chat-messages" class="messages-body">
+        <!-- Dynamic Messages -->
+      </div>
+
+      <!-- Input Area -->
+      <div class="chat-footer">
+        <div id="media-controls" class="media-controls">
+          <input type="file" id="image-input" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+          <button id="btn-upload-img" class="btn-media" onclick="document.getElementById('image-input').click()">📷</button>
+          <button id="btn-record-voice" class="btn-media" onclick="toggleVoiceRecording()">🎙️</button>
+        </div>
+
+        <input type="text" id="message-input" placeholder="মেসেজ লিখুন..." onkeypress="handleKeyPress(event)">
+        <button class="btn btn-primary" onclick="sendMessage()">পাঠান</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Edit Modal -->
+  <div id="profile-modal" class="modal">
+    <div class="modal-content profile-edit-box">
+      <div class="modal-header">
+        <h3>প্রোফাইল আপডেট</h3>
+        <button class="btn-close" onclick="closeProfileModal()">✕</button>
+      </div>
+
+      <div class="profile-form">
+        <div class="input-group">
+          <label>আপনার নাম</label>
+          <input type="text" id="edit-name">
+        </div>
+
+        <!-- User Avatar Picker (50+ SVG Avatars) -->
+        <div id="avatar-picker-section">
+          <label>এভাটার পছন্দ করুন (ছেলে / মেয়ে):</label>
+          <div class="avatar-tabs">
+            <button onclick="renderAvatarGrid('male')">ছেলে</button>
+            <button onclick="renderAvatarGrid('female')">মেয়ে</button>
+          </div>
+          <div id="avatar-grid" class="avatar-grid"></div>
+        </div>
+
+        <!-- Admin Photo Upload -->
+        <div id="admin-photo-section" style="display: none;">
+          <label>প্রোফাইল ছবি আপলোড (অ্যাডমিন):</label>
+          <input type="file" id="admin-photo-input" accept="image/*" onchange="uploadAdminPhoto(event)">
+        </div>
+
+        <button class="btn btn-primary" onclick="saveProfileChanges()">সেভ করুন</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="avatars.js"></script>
+  <script src="app.js"></script>
+</body>
+  </html>
+  
