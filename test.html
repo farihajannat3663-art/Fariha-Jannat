@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Background Preview</title>
+  <style>
+    body {
+      /* এটি আমাদের সেই প্রিমিয়াম বেগুনি মিক্স গ্রেডিয়েন্ট ও গ্লো ইফেক্ট */
+      background: linear-gradient(135deg, #d8b4fe 0%, #f3e8ff 40%, #c084fc 100%);
+      background-attachment: fixed;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ফুলের মতো সফট গ্লো এফেক্ট */
+    body::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(168, 85, 247, 0.4) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    body::after {
+      content: '';
+      position: absolute;
+      bottom: -100px;
+      left: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(232, 121, 249, 0.35) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .preview-box {
+      background: rgba(255, 255, 255, 0.85);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(120, 86, 232, 0.2);
+      font-family: 'Poppins', sans-serif;
+      text-align: center;
+      color: #29243A;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="preview-box">
+    <h2>🟣 Background Preview</h2>
+    <p>এটি তোমার সাইটের নতুন প্রিমিয়াম ব্যাকগ্রাউন্ড ফিল!</p>
+  </div>
+
+</body>
+</html>
