@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>User Home - Fariha Jannat App</title>
+  <!-- Link to External CSS -->
+  <link rel="stylesheet" href="style.css">
+  <!-- Supabase JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    /* Home Specific Layout Adjustments */
+    .home-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px 20px;
+      padding-bottom: 90px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .home-header {
+      padding: 20px 20px 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .user-welcome h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .user-welcome p {
+      font-size: 0.78rem;
+      color: var(--text-sub);
+    }
+
+    .header-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 2px solid var(--primary);
+      padding: 2px;
+      background: white;
+      box-shadow: 0 4px 12px rgba(120, 86, 232, 0.15);
+    }
+
+    .header-avatar img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .admin-connect-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 22px;
+      padding: 22px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(120, 86, 232, 0.1);
+    }
+
+    .admin-connect-card img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 3px solid var(--primary);
+      margin-bottom: 12px;
+      object-fit: cover;
+      box-shadow: 0 6px 18px rgba(120, 86, 232, 0.2);
+    }
+
+    .admin-connect-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--text-main);
+    }
+
+    .admin-connect-card p {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .chat-now-btn {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      border: none;
+      padding: 10px 26px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(120, 86, 232, 0.3);
+      transition: 0.2s;
+    }
+
+    .chat-now-btn:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Glow & Bokeh -->
+  <div class="glow-effect"></div>
+  <div class="bokeh" style="width: 12px; height: 12px; top: 15%; left: 20%; animation-delay: 0s;"></div>
+  <div class="bokeh" style="width: 18px; height: 18px; top: 30%; left: 80%; animation-delay: 1.5s;"></div>
+
+  <div class="bg-container">
+    <div class="top-wave"></div>
+    <div class="bottom-wave"></div>
+    
+    <svg class="svg-element left-mid-leaves" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10,50 Q60,40 100,100 Q50,90 10,50 Z" fill="#B87DFF"/>
+      <path d="M0,80 Q40,70 80,130 Q30,120 0,80 Z" fill="#D6A4FF"/>
+    </svg>
+    <svg class="svg-element right-mid-leaves" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <path d="M180,50 Q130,40 90,100 Q140,90 180,50 Z" fill="#B87DFF"/>
+    </svg>
+  </div>
+
+  <div class="app-viewport">
+    
+    <!-- User Home Header -->
+    <header class="home-header">
+      <div class="user-welcome">
+        <h2 id="user-greeting">Welcome, Sadya!</h2>
+        <p>Have a great conversation today</p>
+      </div>
+      <div class="header-avatar">
+        <img id="user-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sadya" alt="Sadya">
+      </div>
+    </header>
+
+    <!-- Content Area -->
+    <main class="home-content">
+      <div class="admin-connect-card">
+        <img id="admin-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Fariha" alt="Fariha Jannat">
+        <h3 id="admin-name">Fariha Jannat</h3>
+        <p id="admin-bio">Hello! I'm Fariha Jannat. Always here to help & chat with you. 💜</p>
+        <button class="chat-now-btn" onclick="openAdminChat()">Start Chatting</button>
+      </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <div class="nav-item active" onclick="location.href='home.html'">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <span>Home</span>
+      </div>
+      <div class="nav-item" onclick="location.href='user-chat.html'">
+        <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+        <span>Chat</span>
+      </div>
+      <div class="nav-item" onclick="location.href='user-profile.html'">
+        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        <span>Profile</span>
+      </div>
+    </nav>
+
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://bagscbfokioflnuyxcuz.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhZ3NjYmZva2lvZmxudXl4Y3V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM0MjAxOTEsImV4cCI6MjEwODk5NjE5MX0.9iU1vhruNSO54Van2GIBM1OrofuUfplWtPC7O7cV60s";
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function initHome() {
+      try {
+        const { data: { session } } = await db.auth.getSession();
+        if (session) {
+          const { data: userProfile } = await db.from('profiles').select('*').eq('id', session.user.id).maybeSingle();
+          if (userProfile) {
+            if (userProfile.full_name) document.getElementById('user-greeting').innerText = `Welcome, ${userProfile.full_name}!`;
+            if (userProfile.avatar_url) document.getElementById('user-avatar').src = userProfile.avatar_url;
+          }
+
+          const { data: adminProfile } = await db.from('profiles').select('*').eq('role', 'admin').maybeSingle();
+          if (adminProfile) {
+            if (adminProfile.full_name) document.getElementById('admin-name').innerText = adminProfile.full_name;
+            if (adminProfile.avatar_url) document.getElementById('admin-avatar').src = adminProfile.avatar_url;
+            if (adminProfile.bio) document.getElementById('admin-bio').innerText = adminProfile.bio;
+          }
+        }
+      } catch (err) {
+        console.log("Running in preview fallback mode");
+      }
+    }
+
+    async function openAdminChat() {
+      try {
+        const { data: admin } = await db.from('profiles').select('id').eq('role', 'admin').maybeSingle();
+        if (admin) {
+          window.location.href = `user-chat.html?admin_id=${admin.id}`;
+        } else {
+          window.location.href = 'user-chat.html';
+        }
+      } catch (err) {
+        window.location.href = 'user-chat.html';
+      }
+    }
+
+    window.onload = initHome;
+  </script>
+</body>
+</html>
