@@ -1,0 +1,17 @@
+{
+  "name": "Fariha Jannat",
+  "short_name": "Fariha",
+  "description": "Fariha Jannat Official Web Platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8F7FF",
+  "theme_color": "#7856E8",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
