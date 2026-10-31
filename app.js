@@ -12,11 +12,7 @@ const i18n = {
     adminControlTitle: "Admin Control Panel",
     adminLiveStatus: "Online Presence Status:",
     chatListTitle: "Messages",
-    typeMessagePlaceholder: "Type a message...",
-    navHome: "Home",
-    navChat: "Chat",
-    navProfile: "Profile",
-    navSettings: "Settings"
+    typeMessagePlaceholder: "Type a message..."
   },
   bn: {
     welcomeTitle: "স্বাগতম",
@@ -27,28 +23,33 @@ const i18n = {
     adminControlTitle: "অ্যাডমিন কন্ট্রোল প্যানেল",
     adminLiveStatus: "অনলাইন উপস্থিতি স্ট্যাটাস:",
     chatListTitle: "মেসেজসমূহ",
-    typeMessagePlaceholder: "মেসেজ লিখুন...",
-    navHome: "Home",
-    navChat: "Chat",
-    navProfile: "Profile",
-    navSettings: "Settings"
+    typeMessagePlaceholder: "মেসেজ লিখুন..."
   }
 };
 
-let currentLang = localStorage.getItem('app_lang') || 'en';
+let currentLang = localStorage.getItem('app_lang') || 'bn'; // ডিফল্ট বাংলা
 let currentUser = null;
 let currentProfile = null;
 let farihaProfile = null;
 let isLoginMode = true;
 let currentChatUserId = null;
 
+// Navigation Tab Switcher
 function switchTab(screenId, navElement) {
   document.querySelectorAll('.main-content .screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(screenId).classList.add('active');
+  const targetScreen = document.getElementById(screenId);
+  if(targetScreen) targetScreen.classList.add('active');
   
   if (navElement) {
     document.querySelectorAll('.bottom-nav .nav-item').forEach(n => n.classList.remove('active'));
     navElement.classList.add('active');
+  }
+
+  // Hide bottom nav inside chat room
+  if (screenId === 'chat-room-view') {
+    document.getElementById('bottom-nav').style.display = 'none';
+  } else {
+    if(currentUser) document.getElementById('bottom-nav').style.display = 'flex';
   }
 
   if(screenId === 'chat-view') loadChatList();
@@ -67,6 +68,7 @@ function changeLanguage(lang) {
   });
 }
 
+// Auth Logic
 function switchAuthTab(type) {
   isLoginMode = (type === 'login');
   document.getElementById('name-group').style.display = isLoginMode ? 'none' : 'block';
@@ -104,6 +106,7 @@ async function checkSession() {
     document.getElementById('auth-screen').classList.remove('active');
     document.getElementById('bottom-nav').style.display = 'flex';
     
+    // সরাসরি হোম স্ক্রিনে নিয়ে যাবে
     switchTab('home-view', document.getElementById('nav-home'));
     setupRealtimeSubscriptions();
   } else {
@@ -118,12 +121,16 @@ async function loadUserProfile() {
 
   if (data) {
     if(data.is_admin) {
+       // হোম স্ক্রিনে অ্যাডমিন ডাটা সেট করা
        document.getElementById('home-admin-avatar').src = data.avatar_url || 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=female_avatar_1';
        document.getElementById('home-admin-name').innerText = data.full_name;
        document.getElementById('profile-page-avatar').src = data.avatar_url || 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=female_avatar_1';
        document.getElementById('profile-page-name').innerText = data.full_name;
+       
+       // সেটিংসে অ্যাডমিন অপশনগুলো একটিভ করা
        document.getElementById('admin-actions-box').style.display = 'block';
        document.getElementById('admin-online-toggle').checked = data.is_online;
+       document.getElementById('edit-name').value = data.full_name;
     }
   }
 }
@@ -133,20 +140,23 @@ async function loadFarihaProfile() {
   if (data) farihaProfile = data;
 }
 
+// Chat List Logic
 async function loadChatList() {
   const container = document.getElementById('chat-list-container');
-  if(!currentProfile.is_admin) {
-      container.innerHTML = `
-        <div class="chat-item" onclick="openChatRoom('${farihaProfile.full_name}', '${farihaProfile.avatar_url}', '${farihaProfile.id}')">
-            <div class="chat-avatar">
-              <img src="${farihaProfile.avatar_url}" alt="Fariha">
-              <span class="status-dot ${farihaProfile.is_online ? 'online' : ''}"></span>
-            </div>
-            <div class="chat-info">
-              <h4>${farihaProfile.full_name}</h4>
-              <p>Tap to message...</p>
-            </div>
-        </div>`;
+  if(!currentProfile || !currentProfile.is_admin) {
+      if(farihaProfile) {
+          container.innerHTML = `
+            <div class="chat-item" onclick="openChatRoom('${farihaProfile.full_name}', '${farihaProfile.avatar_url}', '${farihaProfile.id}')">
+                <div class="chat-avatar">
+                  <img src="${farihaProfile.avatar_url}" alt="Fariha">
+                  <span class="status-dot ${farihaProfile.is_online ? 'online' : ''}"></span>
+                </div>
+                <div class="chat-info">
+                  <h4>${farihaProfile.full_name}</h4>
+                  <p>Tap to message...</p>
+                </div>
+            </div>`;
+      }
       return;
   }
 
@@ -174,6 +184,7 @@ async function loadChatList() {
   });
 }
 
+// Chat Room Logic
 function openChatRoom(name, avatar, userId) {
   currentChatUserId = userId;
   document.getElementById('chat-room-name').innerText = name;
@@ -224,8 +235,17 @@ async function loadMessages() {
   container.scrollTop = container.scrollHeight;
 }
 
+// Admin Actions & Settings
 async function toggleAdminOnlineStatus(isOnline) {
   await db.from('profiles').update({ is_online: isOnline }).eq('id', currentUser.id);
+}
+
+async function saveProfileChanges() {
+  const newName = document.getElementById('edit-name').value;
+  if(!newName) return;
+  await db.from('profiles').update({ full_name: newName }).eq('id', currentUser.id);
+  alert("Profile updated successfully!");
+  loadUserProfile();
 }
 
 async function adminDelete20MinMedia() {
@@ -242,24 +262,17 @@ async function adminDelete7DaysInactive() {
   alert("Inactive users purged!");
 }
 
-async function saveProfileChanges() {
-  const newName = document.getElementById('edit-name').value;
-  if(!newName) return;
-  await db.from('profiles').update({ full_name: newName }).eq('id', currentUser.id);
-  alert("Profile updated successfully!");
-  loadUserProfile();
-}
-
 async function handleLogout() {
   await db.auth.signOut();
   window.location.reload();
 }
 
+// Realtime Subscriptions
 function setupRealtimeSubscriptions() {
   db.channel('public:messages').on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => {
     if(document.getElementById('chat-room-view').classList.contains('active')) loadMessages();
   }).subscribe();
 }
 
+// Initialize App
 window.onload = checkSession;
-  
