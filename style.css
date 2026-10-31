@@ -2,8 +2,8 @@
 
 :root {
   --primary: #7856E8;
-  --primary-light: #A78BFA;
-  --pink-accent: #F18AB5;
+  --primary-light: #9d7fe6;
+  --pink-accent: #E879F9;
   --bg-glass: rgba(255, 255, 255, 0.82);
   --text-main: #29243A;
   --text-sub: #6B7280;
@@ -15,10 +15,10 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 
+/* Pure CSS Magic Background (Replacing bg.jpg with a gorgeous purple gradient & soft glow) */
 body {
-  background: url('bg.jpg') no-repeat center center fixed;
-  background-size: cover;
-  background-color: #f3e8ff;
+  background: linear-gradient(135deg, #d8b4fe 0%, #f3e8ff 40%, #c084fc 100%);
+  background-attachment: fixed;
   color: var(--text-main);
   display: flex;
   justify-content: center;
@@ -26,6 +26,32 @@ body {
   min-height: 100vh;
   margin: 0;
   overflow: hidden;
+  position: relative;
+}
+
+/* Adding soft decorative ambient gradient circles for flower-like aesthetic glow */
+body::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.4) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: 0;
+}
+
+body::after {
+  content: '';
+  position: absolute;
+  bottom: -100px;
+  left: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(232, 121, 249, 0.35) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: 0;
 }
 
 .app-viewport {
@@ -37,6 +63,7 @@ body {
   position: relative;
   background: transparent;
   overflow: hidden;
+  z-index: 1;
 }
 
 .main-content { 
@@ -61,7 +88,7 @@ body {
   box-shadow: 0 8px 32px rgba(120, 86, 232, 0.15);
 }
 
-/* Admin Home Screen Styles (Exact match to screenshot 3) */
+/* Admin Home Screen Styles */
 .admin-top-profile { 
   display: flex; 
   align-items: center; 
@@ -160,7 +187,7 @@ body {
 input:checked + .slider { background-color: var(--primary); }
 input:checked + .slider:before { transform: translateX(22px); }
 
-/* Graphic Center (Exact match to screenshot 3 illustration) */
+/* Graphic Center */
 .admin-graphic-center { 
   display: flex; 
   flex-direction: column; 
@@ -241,7 +268,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 .chat-room-header img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid white; }
 .chat-messages-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
 .msg-bubble { max-width: 78%; padding: 10px 14px; border-radius: 16px; font-size: 0.88rem; }
-.msg-bubble.sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
+.msg-bubble.sent { align-src: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
 .msg-bubble.received { align-self: flex-start; background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-main); border-bottom-left-radius: 4px; }
 .chat-input-area { display: flex; gap: 10px; align-items: center; padding: 12px 15px; background: var(--bg-glass); border-top: 1px solid var(--border-glass); }
 .chat-input-area input { flex: 1; padding: 10px 14px; border-radius: 20px; border: none; background: rgba(255,255,255,0.7); outline: none; color: var(--text-main); }
@@ -284,4 +311,3 @@ input:checked + .slider:before { transform: translateX(22px); }
 .nav-item svg { width: 22px; height: 22px; fill: currentColor; }
 .divider { margin: 15px 0; border: none; border-top: 1px solid var(--border-glass); }
 .btn-danger { background: var(--danger); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 600; width: 100%; cursor: pointer; }
-  
