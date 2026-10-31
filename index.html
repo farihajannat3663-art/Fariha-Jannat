@@ -3,211 +3,235 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Fariha Jannat — Personal Platform</title>
+  <title>Fariha Jannat</title>
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="favicon.png" type="image/png">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
   <div class="app-viewport">
     
-    <!-- Top Header (Matches Image 3, 4) -->
+    <!-- Top Header (Image 2 style) -->
     <header class="top-header" id="main-header">
-      <div class="brand-name">Fariha Jannat</div>
+      <div class="header-left">
+        <img id="header-admin-photo" src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=female_avatar_1" alt="Admin" class="header-avatar">
+        <div class="header-info">
+          <h3 id="header-admin-name">Fariha Jannat</h3>
+          <span class="status-indicator"><span class="dot online"></span> <span id="header-status-text">Online</span></span>
+        </div>
+      </div>
       <div class="header-actions">
         <select id="lang-selector" onchange="changeLanguage(this.value)" class="lang-select">
-          <option value="en">EN</option>
-          <option value="bn">BN</option>
+          <option value="en">EN ˅</option>
+          <option value="bn">BN ˅</option>
         </select>
         <button class="btn-icon" onclick="toggleTheme()">🌓</button>
-        <button id="btn-settings" class="btn-icon hidden" onclick="openProfileModal()">⚙️</button>
         <button id="btn-logout" class="btn-icon danger hidden" onclick="handleLogout()">🚪</button>
       </div>
     </header>
 
+    <!-- Main Content Container -->
     <main class="main-content">
-      
-      <!-- 1. Auth Screen (Image 1) -->
+
+      <!-- 1. Auth Screen -->
       <section id="auth-screen" class="screen active">
-        <div class="glass-card">
-          <div class="welcome-header">
-            <h2 data-i18n="welcomeTitle">Welcome</h2>
-            <p data-i18n="welcomeSub">Connect directly with Fariha Jannat</p>
-          </div>
+        <div class="glass-card auth-card">
+          <h2 data-i18n="welcomeTitle" style="color:var(--primary); text-align:center; margin-bottom:20px;">স্বাগতম</h2>
+          
           <div class="auth-tabs">
-            <button id="tab-login" class="tab-btn active" onclick="switchAuthTab('login')" data-i18n="loginTab">Login</button>
-            <button id="tab-signup" class="tab-btn" onclick="switchAuthTab('signup')" data-i18n="signupTab">Register</button>
+            <button id="tab-login" class="tab-btn active" onclick="switchAuthTab('login')">লগইন</button>
+            <button id="tab-signup" class="tab-btn" onclick="switchAuthTab('signup')">রেজিস্ট্রেশন</button>
           </div>
+
           <form id="auth-form" onsubmit="handleAuth(event)">
             <div class="input-group" id="name-group" style="display: none;">
-              <label data-i18n="fullNameLabel">Full Name</label>
+              <label data-i18n="fullNameLabel">পূর্ণ নাম</label>
               <input type="text" id="auth-name" placeholder="John Doe">
             </div>
             <div class="input-group">
-              <label data-i18n="emailLabel">Email Address</label>
-              <input type="email" id="auth-email" placeholder="example@mail.com" required>
+              <label data-i18n="emailLabel">ইমেইল</label>
+              <input type="email" id="auth-email" required>
             </div>
             <div class="input-group">
-              <label data-i18n="passwordLabel">Password</label>
-              <input type="password" id="auth-password" placeholder="••••••••" required>
+              <label data-i18n="passwordLabel">পাসওয়ার্ড</label>
+              <input type="password" id="auth-password" required>
             </div>
-            <button type="submit" id="auth-submit-btn" class="btn-gradient" data-i18n="loginBtn">Login</button>
+            <button type="submit" id="auth-submit-btn" class="btn-gradient" data-i18n="loginBtn">লগইন করুন</button>
           </form>
         </div>
       </section>
 
-      <!-- 2. Admin Profile / Home Screen (Image 3) -->
-      <section id="home-view" class="screen">
-        <div class="glass-card profile-card">
-          <div class="profile-avatar-wrap">
-            <img id="owner-photo" src="https://i.pravatar.cc/150?img=47" alt="Fariha">
+      <!-- 2. Admin Profile View (Image 1) -->
+      <section id="profile-view" class="screen">
+        <div class="profile-top-section">
+          <div class="profile-avatar-large">
+            <img id="admin-profile-photo" src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=female_avatar_1" alt="Fariha Jannat">
             <div class="crown-badge">👑</div>
+            <div class="verified-badge">✓</div>
           </div>
-          <h2 class="owner-name">Fariha Jannat</h2>
-          <span class="admin-badge">👑 Admin Panel</span>
-          <p class="profile-bio">Dream Big • Stay Positive 💜</p>
-
-          <div class="about-me-card">
-            <h4><span style="color:var(--primary); font-size:1.2rem;">👤</span> <span data-i18n="aboutMe">About Me</span> <span style="float:right; color:var(--primary); font-size:1.2rem; cursor:pointer;">✏️</span></h4>
-            <p>Hello! I'm Fariha Jannat.<br>Always here to help you. 💜</p>
+          
+          <div class="profile-details">
+            <h2 id="admin-profile-name">Fariha Jannat</h2>
+            <span class="admin-badge">👑 Admin Panel</span>
+            <p class="bio">Dream Big • Stay Positive 💜</p>
           </div>
-
-          <button class="btn-outline" onclick="openProfileModal()" data-i18n="editProfile">✏️ Edit Profile</button>
         </div>
+
+        <div class="about-card">
+          <div class="about-header">
+            <span>👤 About Me</span>
+            <span style="cursor:pointer;" onclick="openSettingsModal()">✏️</span>
+          </div>
+          <p>Hello! I'm Fariha Jannat.<br>Always here to help you. 💜</p>
+        </div>
+
+        <button class="btn-outline" onclick="openSettingsModal()" style="margin-top: 20px;">
+          ✏️ Edit Profile
+        </button>
       </section>
 
-      <!-- 3. Chat List Screen (Image 4) -->
+      <!-- 3. Chat List View (Image 2) -->
       <section id="chat-list-view" class="screen">
-        <!-- Active Users Strip (Dummy UI matching image) -->
-        <div class="active-users-strip">
-           <div class="active-title">
-             <span class="dot-green"></span> 3 Active Now <span style="font-weight:bold;">›</span>
-           </div>
-           <div class="active-avatars">
-             <img src="https://i.pravatar.cc/150?img=11" alt="User">
-             <img src="https://i.pravatar.cc/150?img=5" alt="User">
-             <img src="https://i.pravatar.cc/150?img=3" alt="User">
-             <div class="more-count">+1</div>
-           </div>
+        <div class="chat-list-header">
+          <div class="search-bar">
+            <span>🔍</span>
+            <input type="text" placeholder="Search chats..." id="search-chat">
+          </div>
         </div>
 
-        <div class="search-bar">
-          <span>🔍</span>
-          <input type="text" placeholder="Search chats...">
+        <div class="active-users-row">
+          <span class="active-text"><span class="dot online"></span> <span id="active-users-count">0</span> Active Now</span>
+          <div class="active-avatars" id="active-avatars-container">
+            <!-- Dynamic Avatars -->
+          </div>
         </div>
 
-        <div class="chat-list" id="chat-list-container">
-           <!-- Dynamic list will load here via app.js -->
+        <div class="chat-list-container" id="chat-list-container">
+          <!-- Dynamic Chat List from Supabase -->
+          <p style="text-align:center; color:var(--text-sub); font-size:0.9rem; margin-top:30px;">No chats yet. Wait for messages!</p>
         </div>
       </section>
 
-      <!-- 4. Chat Room Screen (Image 5) -->
-      <section id="chat-room-view" class="screen">
-        <div class="chat-header">
-          <button class="btn-back" onclick="closeChatModal()">←</button>
-          <img id="chat-room-avatar" src="https://i.pravatar.cc/150?img=47" alt="Fariha">
-          <div class="chat-user-info">
-            <h4 id="chat-room-name">Fariha Jannat</h4>
-            <span id="chat-status-sub" class="sub-text"><span class="dot-green"></span> Online</span>
+      <!-- 4. Chat Room View (Image 3) -->
+      <section id="chat-room-view" class="screen" style="padding: 0;">
+        <div class="chat-room-header">
+          <button class="btn-back" onclick="closeChatRoom()">←</button>
+          <img id="chat-room-avatar" src="https://via.placeholder.com/40" alt="User">
+          <div class="chat-room-info">
+            <h4 id="chat-room-name">User</h4>
+            <span class="status-indicator"><span class="dot online"></span> Online</span>
           </div>
+          <button class="btn-icon" style="margin-left:auto;">⋮</button>
         </div>
 
         <div id="chat-messages" class="chat-messages-area">
-          <!-- Dynamic Chat Bubbles -->
+          <!-- Dynamic Messages will load here -->
         </div>
 
-        <div class="chat-footer">
-          <div class="media-actions">
-            <input type="file" id="image-input" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
-            <button id="btn-attach-image" class="btn-media" onclick="document.getElementById('image-input').click()">📎</button>
-            <button id="btn-record-voice" class="btn-media" onclick="toggleVoiceRecording()">🎙️</button>
-          </div>
+        <!-- Image 3 Footer Buttons -->
+        <div class="chat-footer-actions">
+          <button class="btn-footer-action" onclick="document.getElementById('image-input').click()">
+            🖼️ Send Photo
+          </button>
+          <button class="btn-footer-action" onclick="toggleVoiceRecording()">
+            🎙️ Send Voice
+          </button>
+        </div>
+
+        <div class="chat-input-area">
+          <input type="file" id="image-input" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+          <button class="btn-media" onclick="document.getElementById('image-input').click()">📎</button>
           <input type="text" id="message-input" data-i18n-placeholder="typeMessagePlaceholder" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
-          <button class="btn-send" onclick="sendMessage()" data-i18n="btnSend">Send</button>
+          <button class="btn-media" style="color:var(--primary);">😊</button>
+          <button class="btn-send" onclick="sendMessage()">🎙️</button>
+        </div>
+      </section>
+
+      <!-- 5. Admin Control Panel (Image 4) -->
+      <section id="admin-view" class="screen">
+        <div class="glass-card">
+          <h3 data-i18n="adminControlTitle" style="color:var(--primary); margin-bottom:15px; font-size:1.1rem;">🛡️ অ্যাডমিন কন্ট্রোল প্যানেল</h3>
+          <div class="toggle-control">
+            <span data-i18n="adminLiveStatus">অনলাইন উপস্থিতি স্ট্যাটাস:</span>
+            <label class="switch">
+              <input type="checkbox" id="admin-online-toggle" onchange="toggleAdminOnlineStatus(this.checked)">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="admin-graphic">
+           <img src="https://cdn-icons-png.flaticon.com/512/1041/1041916.png" width="120" alt="Chat Graphic">
         </div>
       </section>
 
     </main>
 
-    <!-- Bottom Navigation (Image 4) -->
+    <!-- Bottom Navigation Bar (Image 2 & 4) -->
     <nav class="bottom-nav" id="bottom-nav">
-      <div class="nav-item active" onclick="switchTab('home-view', this)">
+      <div class="nav-item" onclick="switchTab('admin-view', this)" id="nav-admin">
         <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        <span data-i18n="navHome">Home</span>
+        <span>Home</span>
       </div>
-      <div class="nav-item" onclick="switchTab('chat-list-view', this)">
+      <div class="nav-item" onclick="switchTab('chat-list-view', this)" id="nav-chat">
         <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-        <span data-i18n="navChat">Chat</span>
+        <span>Chat</span>
       </div>
-      <div class="nav-item" onclick="switchTab('home-view', this)">
+      <div class="nav-item" onclick="switchTab('profile-view', this)" id="nav-profile">
         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-        <span data-i18n="navProfile">Profile</span>
+        <span>Profile</span>
       </div>
-      <div class="nav-item" onclick="openProfileModal()">
+      <div class="nav-item" onclick="openSettingsModal()" id="nav-settings">
         <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
-        <span data-i18n="navSettings">Settings</span>
+        <span>Settings</span>
       </div>
     </nav>
 
   </div>
 
-  <!-- Profile & Settings Modal (All extra features moved here) -->
-  <div id="profile-modal" class="modal">
+  <!-- Settings Modal (Houses All Extra Features) -->
+  <div id="settings-modal" class="modal">
     <div class="modal-content glass-card">
       <div class="modal-header">
-        <h3 data-i18n="profileModalTitle">Settings & Profile</h3>
-        <button class="btn-close" onclick="closeProfileModal()">✕</button>
+        <h3>⚙️ Settings & Control</h3>
+        <button class="btn-close" onclick="closeSettingsModal()">✕</button>
       </div>
 
-      <div class="profile-body">
-        
-        <!-- General Settings -->
+      <div class="settings-body">
         <div class="input-group">
-          <label data-i18n="editNameLabel">Your Display Name</label>
+          <label>Your Display Name</label>
           <input type="text" id="edit-name">
         </div>
 
         <div id="avatar-section">
-          <label data-i18n="selectAvatarLabel">Choose Coded Avatar:</label>
+          <label>Choose Coded Avatar:</label>
           <div class="avatar-gender-tabs">
-            <button onclick="renderAvatarGrid('male')" data-i18n="tabMale">Male</button>
-            <button onclick="renderAvatarGrid('female')" data-i18n="tabFemale">Female</button>
+            <button onclick="renderAvatarGrid('male')">Male</button>
+            <button onclick="renderAvatarGrid('female')">Female</button>
           </div>
           <div id="avatar-grid" class="avatar-grid"></div>
         </div>
 
-        <div id="admin-photo-section" style="display: none; margin-top:15px;">
-          <label data-i18n="adminPhotoLabel">Upload Official Profile Photo:</label>
+        <div id="admin-photo-section" style="display: none;">
+          <label>Upload Official Profile Photo:</label>
           <input type="file" id="admin-photo-input" accept="image/*" onchange="uploadAdminPhoto(event)">
         </div>
 
-        <button class="btn-gradient" style="margin-top: 15px;" onclick="saveProfileChanges()" data-i18n="btnSaveProfile">Save Changes</button>
+        <button class="btn-gradient" style="margin-top:15px;" onclick="saveProfileChanges()">Save Profile</button>
         
         <hr class="divider">
         
-        <!-- ADMIN COMMAND CENTER (Extra features are here) -->
-        <div id="admin-controls-section" style="display: none;">
-          <h3 style="color:var(--primary); margin-bottom: 15px;" data-i18n="adminControlTitle">🛡️ Admin Command Center</h3>
-          
-          <div class="toggle-control" style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:600; font-size:0.9rem;">
-            <span data-i18n="adminLiveStatus">Online Presence:</span>
-            <input type="checkbox" id="admin-online-toggle" onchange="toggleAdminOnlineStatus(this.checked)" style="transform: scale(1.5);">
-          </div>
-
-          <button class="btn-action warning" onclick="adminDelete20MinMedia()" data-i18n="btnDelete20Min" style="width:100%; padding:12px; border-radius:10px; border:none; background:#F59E0B; color:#fff; font-weight:bold; margin-bottom:10px;">
-            🗑️ Delete 20 Min Media
-          </button>
-          <button class="btn-action danger" onclick="adminDelete7DaysInactive()" data-i18n="btnDeleteInactive" style="width:100%; padding:12px; border-radius:10px; border:none; background:#EF4444; color:#fff; font-weight:bold;">
-            🧹 Purge 7-Day Inactive Users
-          </button>
-          
-          <hr class="divider">
+        <!-- Admin Specific Actions -->
+        <div id="admin-actions-container" style="display:none;">
+           <h4 style="color:var(--warning); margin-bottom:10px;">Admin Actions</h4>
+           <button class="btn-action warning" onclick="adminDelete20MinMedia()" style="width:100%; margin-bottom:10px; padding:10px; border-radius:8px; border:none;">🗑️ Delete 20 Min Media</button>
+           <button class="btn-action danger" onclick="adminDelete7DaysInactive()" style="width:100%; padding:10px; border-radius:8px; border:none;">🧹 Purge Inactive Users</button>
+           <hr class="divider">
         </div>
-
-        <button id="btn-self-delete" class="btn-danger" onclick="deleteMyAccount()" data-i18n="btnDeleteAccount">
-          Delete My Account Permanently
-        </button>
+        
+        <button class="btn-danger" onclick="deleteMyAccount()">Delete My Account</button>
       </div>
     </div>
   </div>
@@ -215,4 +239,4 @@
   <script src="avatars.js"></script>
   <script src="app.js"></script>
 </body>
-          </html>
+</html>
