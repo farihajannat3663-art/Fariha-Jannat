@@ -4,53 +4,138 @@
   --primary: #7856E8;
   --primary-light: #9d7fe6;
   --pink-accent: #E879F9;
-  --bg-glass: rgba(255, 255, 255, 0.82);
+  --bg-glass: rgba(255, 255, 255, 0.65);
   --text-main: #29243A;
   --text-sub: #6B7280;
-  --border-glass: rgba(255, 255, 255, 0.95);
+  --border-glass: rgba(255, 255, 255, 0.85);
   --danger: #EF4444;
   --success: #10B981;
-  --shadow: 0 10px 30px rgba(120, 86, 232, 0.12);
+  --shadow: 0 10px 30px rgba(120, 86, 232, 0.15);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-
-/* Pure CSS Gradient Background with Full Mobile Fit */
-body {
-  background: linear-gradient(135deg, #d8b4fe 0%, #f3e8ff 40%, #c084fc 100%);
-  background-attachment: fixed;
-  color: var(--text-main);
-  min-height: 100vh;
+* {
   margin: 0;
-  overflow-x: hidden;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body, html {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #FBF6FF 0%, #EDDCFF 50%, #DEC3FF 100%);
+  color: var(--text-main);
   position: relative;
 }
 
-/* Soft decorative ambient glow circles */
-body::before {
-  content: '';
+/* Glow Effect */
+.glow-effect {
   position: absolute;
-  top: -100px;
-  right: -100px;
-  width: 350px;
-  height: 350px;
-  background: radial-gradient(circle, rgba(168, 85, 247, 0.4) 0%, transparent 70%);
-  border-radius: 50%;
-  z-index: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120vw;
+  height: 120vh;
+  background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 60%);
+  z-index: 1;
+  pointer-events: none;
 }
 
-body::after {
-  content: '';
+/* Bokeh Particles */
+.bokeh {
   position: absolute;
-  bottom: -100px;
-  left: -100px;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(232, 121, 249, 0.35) 0%, transparent 70%);
   border-radius: 50%;
-  z-index: 0;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 1);
+  animation: floatUp 10s infinite ease-in-out alternate;
+  z-index: 2;
+  pointer-events: none;
 }
 
+@keyframes floatUp {
+  0% { transform: translateY(0) scale(0.8); opacity: 0.3; }
+  100% { transform: translateY(-30px) scale(1.2); opacity: 1; }
+}
+
+/* Background Waves */
+.bg-container {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.top-wave {
+  position: absolute;
+  top: -5%;
+  left: -10%;
+  width: 120%;
+  height: 40vh;
+  background: linear-gradient(180deg, rgba(162, 102, 255, 0.4) 0%, transparent 100%);
+  clip-path: ellipse(80% 60% at 50% 0%);
+}
+
+.bottom-wave {
+  position: absolute;
+  bottom: -5%;
+  left: -10%;
+  width: 120%;
+  height: 50vh;
+  background: linear-gradient(0deg, rgba(155, 81, 224, 0.6) 0%, rgba(214, 164, 255, 0.3) 50%, transparent 100%);
+  clip-path: ellipse(100% 60% at 50% 100%);
+}
+
+/* SVG Elements */
+.svg-element {
+  position: absolute;
+  filter: drop-shadow(0px 15px 25px rgba(120, 86, 232, 0.25));
+}
+
+.bottom-left-flower {
+  bottom: -5vh;
+  left: -10vw;
+  width: clamp(220px, 50vw, 380px);
+  transform-origin: bottom left;
+  animation: swayLeft 8s infinite alternate ease-in-out;
+}
+
+.bottom-right-leaves {
+  bottom: -5vh;
+  right: -10vw;
+  width: clamp(180px, 45vw, 350px);
+  transform-origin: bottom right;
+  animation: swayRight 9s infinite alternate ease-in-out;
+}
+
+.top-right-leaves {
+  top: -5vh;
+  right: -5vw;
+  width: clamp(160px, 40vw, 300px);
+  transform-origin: top right;
+  animation: swayRight 7s infinite alternate ease-in-out;
+}
+
+.left-mid-leaves {
+  top: 25vh;
+  left: -15vw;
+  width: clamp(130px, 35vw, 260px);
+  opacity: 0.8;
+  animation: swayLeft 12s infinite alternate ease-in-out;
+}
+
+@keyframes swayLeft {
+  0% { transform: rotate(0deg) scale(1); }
+  100% { transform: rotate(6deg) scale(1.02); }
+}
+
+@keyframes swayRight {
+  0% { transform: rotate(0deg) scale(1); }
+  100% { transform: rotate(-6deg) scale(1.02); }
+}
+
+/* App Viewport & Layout */
 .app-viewport {
   width: 100%;
   max-width: 480px;
@@ -59,9 +144,8 @@ body::after {
   display: flex;
   flex-direction: column;
   position: relative;
-  background: transparent;
+  z-index: 10;
   overflow: hidden;
-  z-index: 1;
 }
 
 .main-content { 
@@ -75,18 +159,17 @@ body::after {
 .screen { display: none; width: 100%; height: 100%; flex-direction: column; }
 .screen.active { display: flex; }
 
-/* Glass Card */
+/* Glass Card Component */
 .glass-card {
-  background: var(--bg-glass);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border: 1px solid var(--border-glass);
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
   border-radius: 28px;
   padding: 20px;
-  box-shadow: 0 8px 32px rgba(120, 86, 232, 0.15);
+  box-shadow: 0 15px 35px rgba(120, 86, 232, 0.15);
 }
-
-/* Admin Home Screen Styles */
+/* ================= Admin Home Screen (Image 1 Exact Match) ================= */
 .admin-top-profile { 
   display: flex; 
   align-items: center; 
@@ -178,6 +261,7 @@ body::after {
   color: var(--text-main); 
 }
 
+/* Toggle Switch */
 .switch { position: relative; display: inline-block; width: 48px; height: 26px; }
 .switch input { opacity: 0; width: 0; height: 0; }
 .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .3s; border-radius: 34px; }
@@ -218,7 +302,6 @@ input:checked + .slider:before { transform: translateX(22px); }
   justify-content: center;
   box-shadow: 0 10px 30px rgba(120,86,232,0.35); 
   position: relative; 
-  margin-bottom: 25px;
 }
 
 .dots-row { display: flex; gap: 10px; }
@@ -226,8 +309,8 @@ input:checked + .slider:before { transform: translateX(22px); }
 
 .user-purple-node {
   position: absolute; 
-  bottom: -10px; 
-  right: 22%; 
+  bottom: -15px; 
+  right: 15px; 
   background: var(--pink-accent);
   width: 50px; 
   height: 50px; 
@@ -241,7 +324,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   font-size: 1.1rem;
 }
 
-/* Auth & General Components */
+/* ================= Auth & General Components ================= */
 .auth-card { margin: auto; width: 100%; max-width: 360px; }
 .auth-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
 .tab-btn { flex: 1; padding: 10px; border: none; background: rgba(255,255,255,0.5); border-radius: 10px; cursor: pointer; font-weight: 600; color: var(--text-sub); }
@@ -251,7 +334,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 .input-group input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border-glass); background: rgba(255,255,255,0.7); outline: none; color: var(--text-main); }
 .btn-gradient { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; width: 100%; box-shadow: 0 4px 15px rgba(120,86,232,0.3); }
 
-/* Chat List & Room */
+/* ================= Chat List & Room ================= */
 .chat-item { display: flex; align-items: center; gap: 15px; padding: 12px 15px; background: var(--bg-glass); border-radius: 16px; margin-bottom: 10px; border: 1px solid var(--border-glass); cursor: pointer; }
 .chat-avatar { position: relative; width: 45px; height: 45px; }
 .chat-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
@@ -266,13 +349,13 @@ input:checked + .slider:before { transform: translateX(22px); }
 .chat-room-header img { width: 38px; height: 38px; border-radius: 50%; border: 2px solid white; }
 .chat-messages-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
 .msg-bubble { max-width: 78%; padding: 10px 14px; border-radius: 16px; font-size: 0.88rem; }
-.msg-bubble.sent { align-src: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
+.msg-bubble.sent { align-self: flex-end; background: var(--primary); color: white; border-bottom-right-radius: 4px; }
 .msg-bubble.received { align-self: flex-start; background: var(--bg-glass); border: 1px solid var(--border-glass); color: var(--text-main); border-bottom-left-radius: 4px; }
 .chat-input-area { display: flex; gap: 10px; align-items: center; padding: 12px 15px; background: var(--bg-glass); border-top: 1px solid var(--border-glass); }
 .chat-input-area input { flex: 1; padding: 10px 14px; border-radius: 20px; border: none; background: rgba(255,255,255,0.7); outline: none; color: var(--text-main); }
 .btn-send { background: var(--primary); color: white; border: none; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-/* Bottom Navigation Bar */
+/* ================= Bottom Navigation Bar ================= */
 .bottom-nav { 
   position: absolute; 
   bottom: 0; 
@@ -281,7 +364,7 @@ input:checked + .slider:before { transform: translateX(22px); }
   display: flex; 
   justify-content: space-around; 
   padding: 12px 10px; 
-  background: rgba(255, 255, 255, 0.92); 
+  background: rgba(255, 255, 255, 0.85); 
   backdrop-filter: blur(20px); 
   border-top: 1px solid var(--border-glass); 
   border-top-left-radius: 24px; 
@@ -307,6 +390,7 @@ input:checked + .slider:before { transform: translateX(22px); }
 }
 
 .nav-item svg { width: 22px; height: 22px; fill: currentColor; }
+
+/* ================= Utility ================= */
 .divider { margin: 15px 0; border: none; border-top: 1px solid var(--border-glass); }
 .btn-danger { background: var(--danger); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 600; width: 100%; cursor: pointer; }
-  
