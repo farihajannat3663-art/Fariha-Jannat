@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Chat with Admin - Fariha Jannat App</title>
+  <!-- Link to External CSS -->
+  <link rel="stylesheet" href="style.css">
+  <!-- Supabase JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    /* Chat Room Specific Layout Adjustments */
+    .chat-room-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.9);
+      z-index: 20;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-avatar {
+      position: relative;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 2px solid var(--primary);
+      padding: 2px;
+      background: white;
+    }
+
+    .header-avatar img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .status-dot {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      border: 2px solid white;
+      background: var(--success);
+    }
+
+    .header-info h3 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .header-info p {
+      font-size: 0.7rem;
+      color: var(--success);
+      font-weight: 500;
+    }
+
+    .chat-messages-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .date-badge-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 4px;
+    }
+
+    .date-badge {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(10px);
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      color: var(--text-sub);
+      font-weight: 600;
+      border: 1px solid rgba(255,255,255,0.9);
+    }
+
+    .message-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      max-width: 82%;
+    }
+
+    .message-row.incoming {
+      align-self: flex-start;
+    }
+
+    .message-row.outgoing {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .msg-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid var(--primary);
+    }
+
+    .msg-bubble {
+      padding: 9px 12px;
+      border-radius: 18px;
+      font-size: 0.85rem;
+      position: relative;
+      box-shadow: 0 4px 15px rgba(120,86,232,0.08);
+    }
+
+    .incoming .msg-bubble {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      color: var(--text-main);
+      border-bottom-left-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+    }
+
+    .outgoing .msg-bubble {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .msg-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      margin-top: 3px;
+      font-size: 0.62rem;
+      opacity: 0.8;
+    }
+
+    .incoming .msg-footer {
+      color: var(--text-sub);
+    }
+
+    .outgoing .msg-footer {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .seen-tick.read {
+      color: #6ee7b7;
+    }
+
+    .chat-bottom-input-area {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(255, 255, 255, 0.9);
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      z-index: 20;
+    }
+
+    .input-row-main {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(255, 255, 255, 1);
+      border-radius: 24px;
+      padding: 4px 10px;
+      box-shadow: 0 4px 15px rgba(120,86,232,0.08);
+    }
+
+    .input-row-main input {
+      flex: 1;
+      border: none;
+      background: none;
+      outline: none;
+      font-size: 0.88rem;
+      color: var(--text-main);
+      padding: 4px 0;
+      min-width: 0;
+    }
+
+    .input-action-icon {
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Glow & Bokeh -->
+  <div class="glow-effect"></div>
+  <div class="bokeh" style="width: 12px; height: 12px; top: 15%; left: 20%; animation-delay: 0s;"></div>
+  <div class="bokeh" style="width: 18px; height: 18px; top: 30%; left: 80%; animation-delay: 1.5s;"></div>
+
+  <div class="bg-container">
+    <div class="top-wave"></div>
+    <div class="bottom-wave"></div>
+  </div>
+
+  <div class="app-viewport">
+    
+    <!-- Chat Header (Admin Info) -->
+    <header class="chat-room-header">
+      <div class="header-left">
+        <button class="back-btn" onclick="location.href='home.html'">←</button>
+        <div class="header-avatar">
+          <img id="admin-avatar" src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Fariha" alt="Admin">
+          <span class="status-dot" id="admin-status"></span>
+        </div>
+        <div class="header-info">
+          <h3 id="admin-name">Fariha Jannat</h3>
+          <p id="admin-status-text">● Online</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Messages Scroll Area -->
+    <main class="chat-messages-area" id="messages-container">
+      <div class="date-badge-container"><div class="date-badge">Today</div></div>
+      
+      <div class="message-row incoming">
+        <img class="msg-avatar" src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Fariha" alt="Admin">
+        <div class="msg-bubble">
+          হ্যালো! কেমন আছো? কোনো সাহায্য লাগবে কি? 💜
+          <div class="msg-footer">10:00 AM</div>
+        </div>
+      </div>
+
+      <div class="message-row outgoing">
+        <div class="msg-bubble">
+          হ্যালো আপু, আলহামদুলিল্লাহ ভালো আছি। ভালোই চলছে! 😊
+          <div class="msg-footer">10:02 AM <span class="seen-tick read">✓✓</span></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Bottom Input Area -->
+    <footer class="chat-bottom-input-area">
+      <div class="input-row-main">
+        <button class="input-action-icon" id="photo-btn" onclick="triggerPhotoUpload()" title="Send Photo">🖼️</button>
+        <input type="file" id="image-file-input" style="display: none;" accept="image/*" onchange="sendImageMessage(event)">
+        
+        <button class="input-action-icon" title="Send Voice">
+          <svg viewBox="0 0 24 24" fill="#7856E8" width="20" height="20"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+        </button>
+        
+        <input type="text" id="message-input" placeholder="Type a message...">
+        <button class="input-action-icon">😊</button>
+        <button class="send-btn" onclick="sendTextMessage()">➤</button>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://bagscbfokioflnuyxcuz.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhZ3NjYmZva2lvZmxudXl4Y3V6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM0MjAxOTEsImV4cCI6MjEwODk5NjE5MX0.9iU1vhruNSO54Van2GIBM1OrofuUfplWtPC7O7cV60s";
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let currentUser = null;
+    let adminId = null;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    adminId = urlParams.get('admin_id');
+
+    async function initUserChat() {
+      try {
+        const { data: { session } } = await db.auth.getSession();
+        if (session) {
+          currentUser = session.user;
+        }
+
+        if (!adminId) {
+          const { data: admin } = await db.from('profiles').select('*').eq('role', 'admin').maybeSingle();
+          if (admin) adminId = admin.id;
+        }
+
+        if (adminId) {
+          const { data: adminProfile } = await db.from('profiles').select('*').eq('id', adminId).maybeSingle();
+          if (adminProfile) {
+            if (adminProfile.full_name) document.getElementById('admin-name').innerText = adminProfile.full_name;
+            if (adminProfile.avatar_url) document.getElementById('admin-avatar').src = adminProfile.avatar_url;
+            document.getElementById('admin-status-text').innerText = adminProfile.is_online ? "● Online" : "Offline";
+          }
+          loadMessages();
+          subscribeToMessages();
+        }
+      } catch (err) {
+        console.log("Running in preview mode");
+      }
+    }
+
+    async function loadMessages() {
+      if (!currentUser || !adminId) return;
+      const { data: messages } = await db
+        .from('messages')
+        .select('*')
+        .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${adminId}),and(sender_id.eq.${adminId},receiver_id.eq.${currentUser.id})`)
+        .order('created_at', { ascending: true });
+
+      if (messages && messages.length > 0) renderMessages(messages);
+    }
+
+    function renderMessages(messages) {
+      const container = document.getElementById('messages-container');
+      container.innerHTML = `<div class="date-badge-container"><div class="date-badge">Conversation</div></div>`;
+
+      messages.forEach(msg => {
+        const isOutgoing = msg.sender_id === currentUser.id;
+        const row = document.createElement('div');
+        row.className = `message-row ${isOutgoing ? 'outgoing' : 'incoming'}`;
+
+        const timeStr = new Date(msg.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        let seenStatusHtml = isOutgoing ? `<span class="seen-tick ${msg.is_seen ? 'read' : ''}">✓✓</span>` : '';
+
+        let contentHtml = msg.image_url ? 
+          `<div class="msg-image-card"><img src="${msg.image_url}" style="max-width:150px; border-radius:12px;"><div class="msg-footer">${timeStr} ${seenStatusHtml}</div></div>` :
+          `<div class="msg-bubble">${msg.content}<div class="msg-footer">${timeStr} ${seenStatusHtml}</div></div>`;
+
+        if (!isOutgoing) {
+          const avatar = document.createElement('img');
+          avatar.className = 'msg-avatar';
+          avatar.src = document.getElementById('admin-avatar').src;
+          row.appendChild(avatar);
+        }
+
+        const div = document.createElement('div');
+        div.innerHTML = contentHtml;
+        row.appendChild(div.firstElementChild);
+        container.appendChild(row);
+      });
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    async function sendTextMessage() {
+      const input = document.getElementById('message-input');
+      const text = input.value.trim();
+      if (!text || !currentUser || !adminId) return;
+
+      input.value = '';
+      await db.from('messages').insert({
+        sender_id: currentUser.id,
+        receiver_id: adminId,
+        content: text,
+        is_seen: false
+      });
+      loadMessages();
+    }
+
+    function triggerPhotoUpload() {
+      document.getElementById('image-file-input').click();
+    }
+
+    async function sendImageMessage(event) {
+      const file = event.target.files[0];
+      if (!file || !currentUser || !adminId) return;
+
+      const filePath = `chat_images/${currentUser.id}_${Date.now()}`;
+      const { error } = await db.storage.from('chat_media').upload(filePath, file);
+      if (error) {
+        alert("Upload failed: " + error.message);
+        return;
+      }
+
+      const { data: { publicUrl } } = db.storage.from('chat_media').getPublicUrl(filePath);
+      await db.from('messages').insert({
+        sender_id: currentUser.id,
+        receiver_id: adminId,
+        image_url: publicUrl,
+        content: "[Photo]",
+        is_seen: false
+      });
+      loadMessages();
+    }
+
+    function subscribeToMessages() {
+      db.channel('public:messages')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => {
+          loadMessages();
+        })
+        .subscribe();
+    }
+
+    window.onload = initUserChat;
+  </script>
+</body>
+          </html>
+          
