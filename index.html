@@ -7,17 +7,86 @@
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" href="favicon.png" type="image/png">
-  <!-- Supabase JS CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
+  <!-- ================= PURE CSS/SVG BACKGROUND ================= -->
+  <div class="glow-effect"></div>
+  
+  <!-- Animated Bokeh Particles -->
+  <div class="bokeh" style="width: 12px; height: 12px; top: 15%; left: 20%; animation-delay: 0s;"></div>
+  <div class="bokeh" style="width: 18px; height: 18px; top: 30%; left: 80%; animation-delay: 1.5s;"></div>
+  <div class="bokeh" style="width: 8px; height: 8px; top: 70%; left: 10%; animation-delay: 3s;"></div>
+  <div class="bokeh" style="width: 14px; height: 14px; top: 80%; left: 85%; animation-delay: 2s;"></div>
+  <div class="bokeh" style="width: 6px; height: 6px; top: 50%; left: 40%; animation-delay: 4s;"></div>
+  <div class="bokeh" style="width: 20px; height: 20px; top: 10%; left: 60%; animation-delay: 5s;"></div>
+
+  <div class="bg-container">
+    <div class="top-wave"></div>
+    <div class="bottom-wave"></div>
+
+    <!-- Bottom Left Flower -->
+    <svg class="svg-element bottom-left-flower" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMax meet">
+      <defs>
+        <linearGradient id="flowerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#D18AFF" />
+          <stop offset="100%" stop-color="#7856E8" />
+        </linearGradient>
+        <linearGradient id="leafGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#9B51E0" />
+          <stop offset="100%" stop-color="#D6A4FF" />
+        </linearGradient>
+      </defs>
+      <path d="M40,170 Q10,120 60,90 Q80,140 40,170 Z" fill="url(#leafGrad)"/>
+      <path d="M50,180 Q90,140 130,160 Q100,190 50,180 Z" fill="url(#leafGrad)"/>
+      <path d="M30,150 Q0,140 10,100 Q40,120 30,150 Z" fill="url(#leafGrad)"/>
+      <g transform="translate(70, 100) scale(0.8)">
+        <path d="M0,0 C-30,-40 30,-40 0,0" fill="url(#flowerGrad)" transform="rotate(0)"/>
+        <path d="M0,0 C-30,-40 30,-40 0,0" fill="url(#flowerGrad)" transform="rotate(72)"/>
+        <path d="M0,0 C-30,-40 30,-40 0,0" fill="url(#flowerGrad)" transform="rotate(144)"/>
+        <path d="M0,0 C-30,-40 30,-40 0,0" fill="url(#flowerGrad)" transform="rotate(216)"/>
+        <path d="M0,0 C-30,-40 30,-40 0,0" fill="url(#flowerGrad)" transform="rotate(288)"/>
+        <circle cx="0" cy="0" r="10" fill="#FCE1FF"/>
+      </g>
+      <circle cx="40" cy="50" r="10" fill="#A266FF"/>
+      <circle cx="20" cy="70" r="8" fill="#A266FF"/>
+    </svg>
+
+    <!-- Bottom Right Leaves -->
+    <svg class="svg-element bottom-right-leaves" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMax meet">
+       <defs>
+        <linearGradient id="leafGrad2" x1="100%" y1="100%" x2="0%" y2="0%">
+          <stop offset="0%" stop-color="#B87DFF" />
+          <stop offset="100%" stop-color="#E6CCFF" />
+        </linearGradient>
+      </defs>
+      <path d="M180,180 Q140,100 160,40 Q190,120 180,180 Z" fill="url(#leafGrad2)"/>
+      <path d="M160,170 Q100,120 100,60 Q140,120 160,170 Z" fill="url(#leafGrad2)"/>
+      <path d="M190,150 Q160,90 190,30 Q210,100 190,150 Z" fill="url(#leafGrad2)"/>
+    </svg>
+
+    <!-- Top Right Leaves -->
+    <svg class="svg-element top-right-leaves" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMaxYMin meet">
+      <path d="M180,20 Q120,40 80,100 Q130,80 180,20 Z" fill="url(#leafGrad2)"/>
+      <path d="M190,50 Q140,70 100,130 Q150,110 190,50 Z" fill="url(#leafGrad2)"/>
+      <path d="M170,10 Q110,20 70,70 Q120,50 170,10 Z" fill="url(#leafGrad2)"/>
+    </svg>
+
+    <!-- Left Mid Leaves -->
+    <svg class="svg-element left-mid-leaves" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMid meet">
+      <path d="M10,50 Q60,40 100,100 Q50,90 10,50 Z" fill="#D6A4FF"/>
+      <path d="M0,80 Q40,70 80,130 Q30,120 0,80 Z" fill="#D6A4FF"/>
+      <path d="M20,20 Q70,10 110,70 Q60,60 20,20 Z" fill="#D6A4FF"/>
+    </svg>
+  </div>
+  <!-- ======================================================================= -->
+
   <div class="app-viewport">
     
-    <!-- Main Content Container -->
     <main class="main-content">
 
-      <!-- A. Auth Screen (Login / Register) -->
+      <!-- 1. Auth Screen (Login / Register) -->
       <section id="auth-screen" class="screen active">
         <div class="glass-card auth-card">
           <h2 data-i18n="welcomeTitle" style="color:var(--primary); text-align:center; margin-bottom:20px;">Welcome</h2>
@@ -45,9 +114,9 @@
         </div>
       </section>
 
-      <!-- B. Home Screen (Admin Control Panel - Exactly as your screenshot) -->
+      <!-- 2. Home Screen (Admin Control Panel - Exact match to Image 1) -->
       <section id="home-view" class="screen">
-        <!-- Top Admin Header Card -->
+        <!-- Profile Header Area -->
         <div class="admin-top-profile">
           <div class="admin-avatar-ring">
             <img id="home-admin-avatar" src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=female_avatar_1" alt="Fariha Jannat">
@@ -74,28 +143,28 @@
           </div>
         </div>
 
-        <!-- Graphic Illustration Center -->
+        <!-- Central Graphic Section -->
         <div class="admin-graphic-center">
            <div class="graphic-divider-line"></div>
            <div class="graphic-icon-cluster">👥</div>
            <div class="chat-bubble-illustration">
              <div class="dots-row"><span></span><span></span><span></span></div>
+             <div class="user-purple-node">👤</div>
            </div>
-           <div class="user-purple-node">👤</div>
         </div>
       </section>
 
-      <!-- C. Chat List / Chat Room Screen -->
+      <!-- 3. Chat List Screen -->
       <section id="chat-view" class="screen">
         <div class="screen-header-title">
-          <h3 data-i18n="chatListTitle">Messages</h3>
+          <h3 data-i18n="chatListTitle" style="color:var(--primary); margin-bottom: 15px;">Messages</h3>
         </div>
         <div class="chat-list-container" id="chat-list-container">
           <!-- Dynamic Chat List -->
         </div>
       </section>
 
-      <!-- Chat Room Sub-view -->
+      <!-- 4. Chat Room Sub-view -->
       <section id="chat-room-view" class="screen" style="padding: 0;">
         <div class="chat-room-header">
           <button class="btn-back" onclick="switchTab('chat-view', document.getElementById('nav-chat'))">←</button>
@@ -111,51 +180,41 @@
         </div>
 
         <div class="chat-input-area">
-          <input type="file" id="image-input" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
-          <button class="btn-media" onclick="document.getElementById('image-input').click()">📷</button>
           <input type="text" id="message-input" data-i18n-placeholder="typeMessagePlaceholder" placeholder="মেসেজ লিখুন..." onkeypress="handleKeyPress(event)">
           <button class="btn-send" onclick="sendMessage()">➤</button>
         </div>
       </section>
 
-      <!-- D. Profile Screen -->
+      <!-- 5. Profile Screen -->
       <section id="profile-view" class="screen">
         <div class="glass-card" style="text-align: center; margin-top: 20px;">
-          <div class="profile-avatar-large" style="width:100px; height:100px; margin: 0 auto 15px;">
-            <img id="profile-page-avatar" src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=female_avatar_1" alt="Profile">
+          <div class="profile-avatar-large" style="width:100px; height:100px; margin: 0 auto 15px; border-radius:50%; border:3px solid var(--primary); overflow:hidden;">
+            <img id="profile-page-avatar" src="https://api.dicebear.com/7.x/bottts-neutral/svg?seed=female_avatar_1" alt="Profile" style="width:100%; height:100%; object-fit:cover;">
           </div>
           <h2 id="profile-page-name" style="color:var(--primary); margin-bottom: 5px;">Fariha Jannat</h2>
           <p style="color:var(--text-sub); font-size: 0.9rem;">Official Platform Account</p>
         </div>
       </section>
 
-      <!-- E. Settings Screen (All Admin Actions & Preferences) -->
+      <!-- 6. Settings Screen (Houses all extra features) -->
       <section id="settings-view" class="screen">
         <div class="glass-card">
-          <h3 style="color:var(--primary); margin-bottom: 15px;">⚙️ Settings & Preferences</h3>
+          <h3 style="color:var(--primary); margin-bottom: 15px;">⚙️ Settings</h3>
           
           <div class="input-group">
             <label>Change Display Name</label>
             <input type="text" id="edit-name">
           </div>
 
-          <div class="input-group">
-            <label>Language / ভাষা</label>
-            <select id="lang-selector" onchange="changeLanguage(this.value)" class="lang-select-box" style="width:100%; padding:10px; border-radius:10px; border:1px solid var(--border-glass); background:rgba(255,255,255,0.5);">
-              <option value="en">English</option>
-              <option value="bn">বাংলা</option>
-            </select>
-          </div>
-
           <button class="btn-gradient" style="margin-top: 10px;" onclick="saveProfileChanges()">Save Changes</button>
           
           <hr class="divider">
 
-          <!-- Admin Special Maintenance Buttons -->
+          <!-- Admin Specific Actions -->
           <div id="admin-actions-box" style="display:none;">
             <h4 style="color:var(--danger); margin-bottom: 10px; font-size: 0.95rem;">Admin Maintenance</h4>
             <button class="btn-action warning" onclick="adminDelete20MinMedia()" style="width:100%; padding:12px; border-radius:10px; border:none; background:#F59E0B; color:#fff; font-weight:600; margin-bottom:10px; cursor:pointer;">🗑️ Delete 20 Min Media</button>
-            <button class="btn-action danger" onclick="adminDelete7DaysInactive()" style="width:100%; padding:12px; border-radius:10px; border:none; background:var(--danger); color:#fff; font-weight:600; margin-bottom:10px; cursor:pointer;">🧹 Purge 7-Day Inactive Users</button>
+            <button class="btn-action danger" onclick="adminDelete7DaysInactive()" style="width:100%; padding:12px; border-radius:10px; border:none; background:var(--danger); color:#fff; font-weight:600; margin-bottom:10px; cursor:pointer;">🧹 Purge Inactive Users</button>
             <hr class="divider">
           </div>
 
@@ -165,23 +224,23 @@
 
     </main>
 
-    <!-- Bottom Navigation Bar (Home, Chat, Profile, Settings) -->
+    <!-- Bottom Navigation Bar (Matches Image 1) -->
     <nav class="bottom-nav" id="bottom-nav" style="display: none;">
       <div class="nav-item active" onclick="switchTab('home-view', this)" id="nav-home">
         <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        <span data-i18n="navHome">Home</span>
+        <span>Home</span>
       </div>
       <div class="nav-item" onclick="switchTab('chat-view', this)" id="nav-chat">
         <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-        <span data-i18n="navChat">Chat</span>
+        <span>Chat</span>
       </div>
       <div class="nav-item" onclick="switchTab('profile-view', this)" id="nav-profile">
         <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-        <span data-i18n="navProfile">Profile</span>
+        <span>Profile</span>
       </div>
       <div class="nav-item" onclick="switchTab('settings-view', this)" id="nav-settings">
         <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
-        <span data-i18n="navSettings">Settings</span>
+        <span>Settings</span>
       </div>
     </nav>
 
